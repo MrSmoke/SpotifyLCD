@@ -9,6 +9,7 @@ class Display:
             return
 
         # todo
+        print("!!! Display on !!!")
 
         self._is_on = True
         return
@@ -18,6 +19,7 @@ class Display:
             return
 
         # todo
+        print("!!! Display off !!!")
 
         self._is_on = False
         return
