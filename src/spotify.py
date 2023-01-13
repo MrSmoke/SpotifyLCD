@@ -10,23 +10,35 @@ headers = {
 
 
 def get_currently_playing() -> CurrentTrack | ApiError | None:
+    response = None
+    json_data = None
+
     try:
         response = requests.get(url=SPOTIFY_API + "me/player/currently-playing",
-                          headers=headers)
+                                headers=headers,
+                                stream=True)
+
+        status_code = response.status_code
+
+        # If we have no content, then we have no track playing, so return nothing
+        if status_code == 204:
+            return None
+
+        json_data = response.json()
+
     except Exception as ex:
         print(f"Failed to access Spotify: {ex=}, {type(ex)=}")
         return ApiError(0, "Failed to access Spotify")
 
-    # If we have no content, then we have no track playing, so return nothing
-    if response.status_code == 204:
-        return None
+    finally:
+        if response:
+            response.close()
 
-    json_data = response.json()
     error = json_data.get("error")
 
     # Check if we have an error and if we do, return that
     if error is not None:
-        return ApiError(response.status_code, error.get("message", ""))
+        return ApiError(status_code, error.get("message", ""))
 
     # Extract the track data and return a CurrentTrack object
     track = json_data["item"]
