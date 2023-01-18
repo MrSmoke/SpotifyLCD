@@ -1,5 +1,11 @@
 class Display:
-    def __init__(self, columns, rows) -> None:
+    def __init__(self, columns: int, rows: int) -> None:
+        if not isinstance(columns, int):
+            raise Exception('Columns must be an integer')
+        
+        if not isinstance(rows, int):
+            raise Exception('Rows must be an integer')
+        
         self._rows = rows
         self._columns = columns
         self._is_on = False

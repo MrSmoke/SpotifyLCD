@@ -1,0 +1,14 @@
+{
+    "spotify": {
+        "clientId": "",
+        "clientSecret": ""
+    },
+    "wifi": {
+        "ssid": "",
+        "password": ""
+    },
+    "lcd": {
+        "rows": 2,
+        "columns": 20
+    }
+}
