@@ -1,19 +1,25 @@
+from config import Config
 from time import sleep
 import network
 import machine
 
-import spotify
+from spotify import Spotify
 from display import Display
 from models import CurrentTrack, ApiError
 
+# 1 sec sleep at the start to make it easier to read all the console output
 sleep(1)
 
-from config import Config
+# Load the config
 config = Config('config.json')
 
 # Create a new instance of our display before we start
 display = Display(columns=int(config.get('lcd.columns')),
                   rows=int(config.get('lcd.rows')))
+
+# Initialise spotify
+spotify = Spotify(client_id=config.get('spotify.clientId'),
+                  client_secret=config.get('spotify.clientSecret'))
 
 
 def get_display_text(currently_playing) -> list[str]:
