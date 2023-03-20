@@ -13,6 +13,7 @@ class Display:
         self._is_on = False
         self._lcd = LCD((16, 17, 18, 19, 20, 21), columns, rows)
 
+    # Turns on the display
     def on(self):
         if self._is_on:
             return
@@ -20,9 +21,14 @@ class Display:
         # todo
         print("!!! Display on !!!")
 
+        # Clear the screen first
+        self.clear();
+
+        # Then set the display as on
         self._is_on = True
         return
 
+    # Turns off the display
     def off(self):
         if not self._is_on:
             return
@@ -33,6 +39,11 @@ class Display:
         self._is_on = False
         return
 
+    # Clears the LCD
+    def clear(self):
+        self._lcd.lines = [""] * self._rows;
+
+    # Prints passed lines. Will clear all other lines
     def print_lines(self, lines: list[str]):
         if not self._is_on:
             return
@@ -40,18 +51,21 @@ class Display:
         # Temp: LCD start
         print("-"*self._columns)
 
-        line_count = 0
-        for line in lines:
+        line_length = len(lines)
 
-            if line_count == self._rows:
-                break
+        for row in range(self._rows):
+            line = ""
 
-            line_count += 1
+            # Check we have another line to write
+            if row < line_length:
+                line = lines[row];
 
+            # Check that the line is not too line
             if len(line) > self._columns:
                 line = line[:self._columns - 3].strip() + "..."
 
-            self._lcd[line_count-1] = line
+            # Write line
+            self._lcd[row] = line
             print(line)
 
         # Temp: LCD end
