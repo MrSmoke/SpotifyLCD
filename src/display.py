@@ -1,4 +1,10 @@
 from as_drivers.hd44780.alcd import LCD
+from machine import Pin, PWM
+import math
+
+# 100 = Number of brightness steps
+# 65535 = Max value of brightness
+R = (100 * math.log10(2)) / math.log10(65535)
 
 class Display:
     def __init__(self, columns: int, rows: int) -> None:
@@ -12,6 +18,14 @@ class Display:
         self._columns = columns
         self._is_on = False
         self._lcd = LCD((16, 17, 18, 19, 20, 21), columns, rows)
+        self._backlightPWM = PWM(Pin(22, Pin.OUT))
+        self._brightness = 50
+
+    # Sets the display brightness
+    def set_brightness(self, percent: float):
+        # This is lifted from https://diarmuid.ie/blog/pwm-exponential-led-fading-on-arduino-or-other-platforms
+        brightness = int(math.pow(2, percent / R))
+        self._backlightPWM.duty_u16(brightness)
 
     # Turns on the display
     def on(self):
@@ -21,10 +35,11 @@ class Display:
         # todo
         print("!!! Display on !!!")
 
-        # Clear the screen first
+        # Clear the screen to make sure nothing old is displayed
         self.clear();
 
         # Then set the display as on
+        self.set_brightness(self._brightness)
         self._is_on = True
         return
 
@@ -33,9 +48,14 @@ class Display:
         if not self._is_on:
             return
 
+        # Clear the screen so thers nothing to display
+        self.clear();
+
         # todo
         print("!!! Display off !!!")
 
+        # Set the display as off
+        self._backlightPWM.duty_u16(0)
         self._is_on = False
         return
 
